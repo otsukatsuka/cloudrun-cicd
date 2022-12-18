@@ -1,0 +1,25 @@
+apiVersion: skaffold/v3alpha1
+kind: Config
+metadata:
+  name: test
+build:
+  tagPolicy:
+    sha256: {}
+  artifacts:
+    - image: "{{.GCR_REPOSITORY}}"
+      docker:
+        dockerfile: build/Dockerfile
+        cacheFrom:
+          - alpine
+          - "{{.GCR_REPOSITORY}}"
+  googleCloudBuild:
+    projectId: "{{.GOOGLE_CLOUD_PROJECT}}"
+profiles:
+  - name: dev
+    manifests:
+      rawYaml:
+        - run-dev.yaml
+deploy:
+  cloudrun:
+    projectid: "{{.GOOGLE_CLOUD_PROJECT}}"
+    region: "{{.REGION}}"
