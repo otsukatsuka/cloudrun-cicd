@@ -1,0 +1,24 @@
+apiVersion: deploy.cloud.google.com/v1
+kind: DeliveryPipeline
+metadata:
+  name: cloudrun-app
+description: main application pipeline
+serialPipeline:
+  stages:
+    - targetId: cloudrundev
+      profiles: [dev]
+---
+apiVersion: deploy.cloud.google.com/v1
+kind: Target
+metadata:
+  name: cloudrundev
+description: development deployment
+requireApproval: true
+run:
+  location: "projects/{{.GOOGLE_CLOUD_PROJECT}}/locations/{{.REGION}}"
+executionConfigs:
+  - defaultPool:
+      serviceAccount: "{{.CLOUD_DEPLOY_DEPLOYER_SA}}"
+    usages:
+      - RENDER
+      - DEPLOY
